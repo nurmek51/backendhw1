@@ -26,12 +26,8 @@ jobs:
       run: sleep 10 # Adjust as needed, or use a proper wait-for-it for CI
 
     - name: Run tests (TODO: Implement actual tests)
-      run: |
-        curl http://localhost:8000/status
-        # In a real scenario, you'd run your Python tests here
-        # docker compose exec web pytest # if you set up pytest
-        # Ensure your tests clean up after themselves or use separate test databases
+      run: curl http://localhost:8000/status
 
     - name: Stop Docker Compose services
       if: always() # Run even if previous steps fail
-      run: docker compose down 
+      run: docker compose down
