@@ -19,8 +19,10 @@ jobs:
       - name: Build Docker images
         run: docker compose build
 
-      - name: Run Docker Compose services (for testing)
-        run: docker compose up -d
+      - name: Clean and Run Docker Compose services (for testing)
+        run: |
+          docker compose down -v || true # Ensure clean slate, ignore errors if containers don't exist
+          docker compose up -d
 
       - name: Wait for services to be ready
         run: |
@@ -32,11 +34,7 @@ jobs:
           curl -f http://localhost:8000/status || { echo "Service not ready after 60 seconds!"; exit 1; }
 
       - name: Run tests
-        run: |
-          curl http://localhost:8000/status
-          # In a real scenario, you'd run your Python tests here
-          # docker compose exec web pytest # if you set up pytest
-          # Ensure your tests clean up after themselves or use separate test databases
+        run: curl http://localhost:8000/status
 
       - name: Stop Docker Compose services
         if: always() # Run even if previous steps fail
