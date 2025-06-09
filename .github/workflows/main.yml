@@ -23,7 +23,13 @@ jobs:
         run: docker compose up -d
 
       - name: Wait for services to be ready
-        run: sleep 10 # Adjust as needed, or use a proper wait-for-it for CI
+        run: |
+          for i in $(seq 1 30); do
+            curl -f http://localhost:8000/status && break
+            echo "Waiting for service to be ready... ($i/30)"
+            sleep 2
+          done
+          curl -f http://localhost:8000/status || { echo "Service not ready after 60 seconds!"; exit 1; }
 
       - name: Run tests
         run: |
