@@ -1,0 +1,37 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main # or master, depending on your default branch
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build Docker images
+      run: docker compose build
+
+    - name: Run Docker Compose services (for testing)
+      run: docker compose up -d
+
+    - name: Wait for services to be ready
+      run: sleep 10 # Adjust as needed, or use a proper wait-for-it for CI
+
+    - name: Run tests (TODO: Implement actual tests)
+      run: |
+        curl http://localhost:8000/status
+        # In a real scenario, you'd run your Python tests here
+        # docker compose exec web pytest # if you set up pytest
+        # Ensure your tests clean up after themselves or use separate test databases
+
+    - name: Stop Docker Compose services
+      if: always() # Run even if previous steps fail
+      run: docker compose down 

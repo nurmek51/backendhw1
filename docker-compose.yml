@@ -22,6 +22,7 @@ services:
       - db
     environment:
       DATABASE_URL: postgresql://your_db_user:your_db_password@db:5432/your_db_name
+      SECRET_KEY: "your-strong-jwt-secret-key-here"
 
 volumes:
   db-data: 

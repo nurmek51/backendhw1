@@ -20,6 +20,6 @@ def get_db():
 # Function to create tables (will be called from main.py or startup)
 def create_db_tables():
     # Import all models here so that Base.metadata.create_all knows them
-    # Alternatively, import in main.py before calling this
     from app.models.task import DBTask  # noqa: F401
+    from app.models.user import DBUser # noqa: F401
     Base.metadata.create_all(bind=engine) 

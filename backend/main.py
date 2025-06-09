@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from app.api.endpoints import tasks
+from app.api.endpoints import tasks, auth
 from app.database import create_db_tables
 
 app = FastAPI()
@@ -16,6 +16,7 @@ app.mount("/frontend", StaticFiles(directory="frontend", html=True), name="front
 
 # Include API routers with a prefix
 app.include_router(tasks.router, prefix="/api")
+app.include_router(auth.router, prefix="/api")
 
 @app.get("/hello")
 async def read_root():
