@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Welcome to your Task Manager!</h1>
+
+    <div class="container">
+        <section class="task-form">
+            <h2>Create New Task</h2>
+            <form id="create-task-form">
+                <input type="text" id="task-title" placeholder="Task Title" required>
+                <textarea id="task-description" placeholder="Task Description (Optional)"></textarea>
+                <button type="submit">Add Task</button>
+            </form>
+        </section>
+
+        <section class="task-list">
+            <h2>Your Tasks</h2>
+            <ul id="tasks-container">
+                <!-- Tasks will be loaded here by JavaScript -->
+            </ul>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
