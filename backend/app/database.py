@@ -22,4 +22,5 @@ def create_db_tables():
     # Import all models here so that Base.metadata.create_all knows them
     from app.models.task import DBTask  # noqa: F401
     from app.models.user import DBUser # noqa: F401
+    from app.models.fetched_data import DBFetchedData # noqa: F401
     Base.metadata.create_all(bind=engine) 

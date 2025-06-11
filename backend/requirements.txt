@@ -4,3 +4,9 @@ sqlalchemy==2.0.30
 psycopg2-binary==2.9.9
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
+celery==5.4.0
+redis==5.0.1
+requests==2.32.3
+google-generativeai==0.4.1
+langchain-google-genai==1.0.1
+langchain-core==0.1.0

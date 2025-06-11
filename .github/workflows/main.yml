@@ -39,3 +39,4 @@ jobs:
       - name: Stop Docker Compose services
         if: always() # Run even if previous steps fail
         run: docker compose down
+ 

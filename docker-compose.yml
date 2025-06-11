@@ -13,6 +13,11 @@ services:
     ports:
       - "5432:5432"
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
   web:
     build: ./backend
     command: /usr/local/bin/wait-for-it.sh db:5432 --timeout=30 --strict -- uvicorn main:app --host 0.0.0.0 --port 8000
@@ -23,6 +28,37 @@ services:
     environment:
       DATABASE_URL: postgresql://your_db_user:your_db_password@db:5432/your_db_name
       SECRET_KEY: "your-strong-jwt-secret-key-here"
+      CELERY_BROKER_URL: redis://redis:6379/0
+      GEMINI_API_KEY: "AIzaSyBv6axT-jjj8EC8NeD-x5vOgAPNVJYB2eI"
+
+  celery_worker:
+    build: ./backend
+    command: /usr/local/bin/wait-for-it.sh db:5432 --timeout=30 --strict -- /usr/local/bin/wait-for-it.sh redis:6379 --timeout=30 --strict -- celery -A main:celery_app worker --loglevel=info
+    environment:
+      DATABASE_URL: postgresql://your_db_user:your_db_password@db:5432/your_db_name
+      SECRET_KEY: "your-strong-jwt-secret-key-here"
+      CELERY_BROKER_URL: redis://redis:6379/0
+      GEMINI_API_KEY: "AIzaSyBv6axT-jjj8EC8NeD-x5vOgAPNVJYB2eI"
+    depends_on:
+      - db
+      - redis
+      - web
+
+  celery_beat:
+    build: ./backend
+    command: /usr/local/bin/wait-for-it.sh db:5432 --timeout=30 --strict -- /usr/local/bin/wait-for-it.sh redis:6379 --timeout=30 --strict -- celery -A main:celery_app beat --loglevel=info -s /tmp/celerybeat-schedule
+    environment:
+      DATABASE_URL: postgresql://your_db_user:your_db_password@db:5432/your_db_name
+      SECRET_KEY: "your-strong-jwt-secret-key-here"
+      CELERY_BROKER_URL: redis://redis:6379/0
+      GEMINI_API_KEY: "AIzaSyBv6axT-jjj8EC8NeD-x5vOgAPNVJYB2eI"
+    depends_on:
+      - db
+      - redis
+      - web
+    volumes:
+      - celerybeat-data:/tmp
 
 volumes:
-  db-data: 
+  db-data:
+  celerybeat-data: 

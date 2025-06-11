@@ -6,6 +6,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const taskTitleInput = document.getElementById("task-title");
   const taskDescriptionInput = document.getElementById("task-description");
 
+  // Chatbot elements
+  const chatBox = document.getElementById("chat-box");
+  const chatInput = document.getElementById("chat-input");
+  const sendChatBtn = document.getElementById("send-chat-btn");
+  const aiChatModal = document.getElementById("ai-chat-modal");
+  const openAiChatButton = document.getElementById("open-ai-chat-button");
+  const closeAiChatButton = document.getElementById("close-ai-chat-button");
+
   const registerForm = document.getElementById("register-form");
   const registerUsernameInput = document.getElementById("register-username");
   const registerPasswordInput = document.getElementById("register-password");
@@ -26,6 +34,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const API_BASE_URL = "http://localhost:8000";
   let accessToken = null;
+
+  // Chat History
+  let chatHistory = [];
 
   function setAuthToken(token) {
     accessToken = token;
@@ -175,6 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
+
           fetchTasks(); // Refresh tasks after deletion
         } catch (error) {
           console.error("Error deleting task:", error);
@@ -329,22 +341,6 @@ document.addEventListener("DOMContentLoaded", () => {
       authMessage.textContent = "Registration successful! You can now log in.";
       registerUsernameInput.value = "";
       registerPasswordInput.value = "";
-      // Optionally, auto-login after registration
-      // const loginResponse = await fetch(`${API_BASE_URL}/api/token`, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/x-www-form-urlencoded",
-      //   },
-      //   body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`,
-      // });
-      // if (loginResponse.ok) {
-      //   const data = await loginResponse.json();
-      //   setAuthToken(data.access_token);
-      //   setAuthView();
-      //   fetchTasks();
-      // } else {
-      //   console.error("Auto-login failed after registration.", loginResponse.statusText);
-      // }
     } catch (error) {
       console.error("Error during registration:", error);
       authMessage.textContent = `Registration failed: ${error.message}`;
@@ -399,12 +395,84 @@ document.addEventListener("DOMContentLoaded", () => {
     authMessage.textContent = "Logged out successfully.";
   });
 
-  // Initial fetch of tasks when the page loads
-  // And set initial view based on login status
-  const initialToken = getAuthToken();
-  if (initialToken) {
-    accessToken = initialToken; // Restore token from local storage
+  function saveChatHistory() {
+    localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
   }
+
+  function loadChatHistory() {
+    const storedHistory = localStorage.getItem("chatHistory");
+    if (storedHistory) {
+      chatHistory = JSON.parse(storedHistory);
+      chatHistory.forEach((message) => {
+        addMessageToChatBox(message.sender, message.text, false); // Do not save again
+      });
+    }
+  }
+
+  function addMessageToChatBox(sender, message, save = true) {
+    const messageElement = document.createElement("div");
+    messageElement.classList.add("chat-message");
+    messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
+    chatBox.appendChild(messageElement);
+    chatBox.scrollTop = chatBox.scrollHeight; // Scroll to bottom
+
+    if (save) {
+      chatHistory.push({ sender, text: message });
+      saveChatHistory();
+    }
+  }
+
+  async function sendChatMessage() {
+    const message = chatInput.value.trim();
+    if (!message) return;
+
+    addMessageToChatBox("You", message);
+    chatInput.value = "";
+
+    try {
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/chatbot/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: message, history: chatHistory }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      addMessageToChatBox("AI Assistant", data.response);
+    } catch (error) {
+      console.error("Error sending message to AI Assistant:", error);
+      addMessageToChatBox("AI Assistant", "Error: Could not get a response.");
+    }
+  }
+
+  sendChatBtn.addEventListener("click", sendChatMessage);
+  chatInput.addEventListener("keypress", (event) => {
+    if (event.key === "Enter") {
+      sendChatMessage();
+    }
+  });
+
+  openAiChatButton.addEventListener("click", () => {
+    aiChatModal.style.display = "block";
+  });
+
+  closeAiChatButton.addEventListener("click", () => {
+    aiChatModal.style.display = "none";
+  });
+
+  window.addEventListener("click", (event) => {
+    if (event.target == aiChatModal) {
+      aiChatModal.style.display = "none";
+    }
+  });
+
+  // Call setAuthView and fetchTasks on page load
   setAuthView();
   fetchTasks();
+  loadChatHistory(); // Load chat history on initial page load
 });
