@@ -1,8 +1,9 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 20px;
     background-color: #f4f4f4;
     color: #333;
+    line-height: 1.6;
 }
 
 h1 {
@@ -119,4 +120,111 @@ form button:hover {
 
 #tasks-container li .delete-task:hover {
     background-color: #c82333;
+}
+
+/* Styling for the Daily Data Section */
+#daily-data-section {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+#daily-data-section h2 {
+    color: #0056b3;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+#daily-data-container {
+    background-color: #f0f8ff;
+    border: 1px solid #d0e0ff;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+#daily-data-container h3 {
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+#daily-data-container p {
+    margin-bottom: 5px;
+    line-height: 1.5;
+}
+
+#refresh-daily-data {
+    background-color: #17a2b8;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+#refresh-daily-data:hover {
+    background-color: #138496;
+}
+
+/* General UI Improvements */
+header {
+    background-color: #0056b3;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    color: white;
+    margin: 0;
+}
+
+main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+#auth-section, #task-management, #daily-data-section {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Modal styling improvements */
+.modal {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.modal-content {
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Chatbot button styling */
+#open-ai-chat-button {
+    background-color: #20c997 !important;
+    padding: 12px 25px !important;
+    font-size: 17px !important;
+    border-radius: 5px !important;
+    margin-top: 20px !important;
+}
+
+#open-ai-chat-button:hover {
+    background-color: #17a47d !important;
 }

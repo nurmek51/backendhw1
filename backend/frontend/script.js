@@ -32,6 +32,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const loggedInView = document.getElementById("logged-in-view");
   const taskManagementSection = document.getElementById("task-management");
 
+  // Daily Data elements
+  const dailyDataContainer = document.getElementById("daily-data-container");
+  const refreshDailyDataButton = document.getElementById("refresh-daily-data");
+
   const API_BASE_URL = "http://localhost:8000";
   let accessToken = null;
 
@@ -471,8 +475,45 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Call setAuthView and fetchTasks on page load
+  // Function to fetch and display daily data
+  async function fetchDailyData() {
+    if (!isAuthenticated()) {
+      dailyDataContainer.innerHTML = "<p>Please log in to see daily data.</p>";
+      return;
+    }
+    dailyDataContainer.innerHTML = "<p>Loading daily data...</p>"; // Loading indicator
+    try {
+      const response = await fetchWithAuth(`${API_BASE_URL}/api/daily-data`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+
+      if (result.status === "success") {
+        const data = result.data;
+        dailyDataContainer.innerHTML = `
+          <h3>${data.title}</h3>
+          <p>ID: ${data.id}</p>
+          <p>${data.body}</p>
+          <p>Source: ${result.source}</p>
+        `;
+      } else {
+        dailyDataContainer.innerHTML = `<p>Error: ${result.message}</p>`;
+      }
+    } catch (error) {
+      console.error("Error fetching daily data:", error);
+      dailyDataContainer.innerHTML = "<p>Error loading daily data.</p>";
+    }
+  }
+
+  // Add event listener for refreshing daily data
+  refreshDailyDataButton.addEventListener("click", fetchDailyData);
+
+  // Initial fetch of daily data on page load if authenticated
+  if (isAuthenticated()) {
+    fetchTasks();
+    fetchDailyData();
+  }
+
   setAuthView();
-  fetchTasks();
-  loadChatHistory(); // Load chat history on initial page load
 });
